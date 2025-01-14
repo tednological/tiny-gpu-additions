@@ -24,7 +24,7 @@ module decoder (
     output reg decoded_mem_write_enable,           // Enable writing to memory
     output reg decoded_nzp_write_enable,           // Enable writing to NZP register
     output reg [1:0] decoded_reg_input_mux,        // Select input to register
-    output reg [1:0] decoded_alu_arithmetic_mux,   // Select arithmetic operation
+    output reg [2:0] decoded_alu_arithmetic_mux,   // Select arithmetic operation - NEW ADDITION - Increased the bit width to allow for ROR command
     output reg decoded_alu_output_mux,             // Select operation in ALU
     output reg decoded_pc_mux,                     // Select source of next PC
 
@@ -41,6 +41,10 @@ module decoder (
         LDR = 4'b0111,
         STR = 4'b1000,
         CONST = 4'b1001,
+        ROR = 4'b1010, // NEW ADDITION - ROR for rotate right
+        ROL = 4'b1011;
+        SLL = 4'b1100;
+        SRL = 4'b1101;
         RET = 4'b1111;
 
     always @(posedge clk) begin 
@@ -95,22 +99,22 @@ module decoder (
                     ADD: begin 
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
-                        decoded_alu_arithmetic_mux <= 2'b00;
+                        decoded_alu_arithmetic_mux <= 3'b000;
                     end
                     SUB: begin 
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
-                        decoded_alu_arithmetic_mux <= 2'b01;
+                        decoded_alu_arithmetic_mux <= 3'b001;
                     end
                     MUL: begin 
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
-                        decoded_alu_arithmetic_mux <= 2'b10;
+                        decoded_alu_arithmetic_mux <= 3'b010;
                     end
                     DIV: begin 
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
-                        decoded_alu_arithmetic_mux <= 2'b11;
+                        decoded_alu_arithmetic_mux <= 3'b011;
                     end
                     LDR: begin 
                         decoded_reg_write_enable <= 1;
@@ -123,6 +127,26 @@ module decoder (
                     CONST: begin 
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b10;
+                    end
+                    ROR: begin
+                        decoded_reg_write_enable <= 1;
+                        decoded_reg_input_mux <= 2'b00;
+                        decoded_alu_arithmetic_mux <= 3'b100;
+                    end
+                    ROL: begin
+                        decoded_reg_write_enable <= 1;
+                        decoded_reg_input_mux <= 2'b00;
+                        decoded_alu_arithmetic_mux <= 3'b101;
+                    end
+                    SLL: begin
+                        decoded_reg_write_enable <= 1;
+                        decoded_reg_input_mux <= 2'b00;
+                        decoded_alu_arithmetic_mux <= 3'b110;
+                    end
+                    SRL: begin
+                        decoded_reg_write_enable <= 1;
+                        decoded_reg_input_mux <= 2'b00;
+                        decoded_alu_arithmetic_mux <= 3'b111;
                     end
                     RET: begin 
                         decoded_ret <= 1;
