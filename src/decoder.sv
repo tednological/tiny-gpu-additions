@@ -42,9 +42,9 @@ module decoder (
         STR = 4'b1000,
         CONST = 4'b1001,
         ROR = 4'b1010, // NEW ADDITION - ROR for rotate right
-        ROL = 4'b1011;
-        SLL = 4'b1100;
-        SRL = 4'b1101;
+        ROL = 4'b1011; // NEW ADDITION - ROL for rotate left
+        SLL = 4'b1100; // NEW ADDITION - SLL for shift left logical
+        SRL = 4'b1101; // NEW ADDITION - SRL for shift right logical
         RET = 4'b1111;
 
     always @(posedge clk) begin 
@@ -128,22 +128,22 @@ module decoder (
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b10;
                     end
-                    ROR: begin
+                    ROR: begin // NEW ADDITION - ROR for rotate right
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
                         decoded_alu_arithmetic_mux <= 3'b100;
                     end
-                    ROL: begin
+                    ROL: begin // NEW ADDITION - ROL for rotate left
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
                         decoded_alu_arithmetic_mux <= 3'b101;
                     end
-                    SLL: begin
+                    SLL: begin // NEW ADDITION - SLL for shift left logical
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
                         decoded_alu_arithmetic_mux <= 3'b110;
                     end
-                    SRL: begin
+                    SRL: begin // NEW ADDITION - SRL for shift right logical
                         decoded_reg_write_enable <= 1;
                         decoded_reg_input_mux <= 2'b00;
                         decoded_alu_arithmetic_mux <= 3'b111;
