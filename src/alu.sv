@@ -11,19 +11,23 @@ module alu (
     input wire reset,
     input wire enable, // If current block has less threads then block size, some ALUs will be inactive
 
-    input reg [2:0] core_state,
+    input wire [2:0] core_state, // I had to change it from reg to wire in order to get it to compile in EDA playground :(
 
-    input reg [1:0] decoded_alu_arithmetic_mux,
-    input reg decoded_alu_output_mux,
+    input wire [2:0] decoded_alu_arithmetic_mux,
+    input wire decoded_alu_output_mux,
 
-    input reg [7:0] rs,
-    input reg [7:0] rt,
+    input wire [7:0] rs,
+    input wire [7:0] rt,
     output wire [7:0] alu_out
 );
-    localparam ADD = 2'b00,
-        SUB = 2'b01,
-        MUL = 2'b10,
-        DIV = 2'b11;
+    localparam ADD = 3'b000,
+        SUB = 3'b001,
+        MUL = 3'b010,
+        DIV = 3'b011,
+        ROR = 3'b100;
+        ROL = 3'b101;
+        SLL = 3'b110;
+        SRL = 3'b111;
 
     reg [7:0] alu_out_reg;
     assign alu_out = alu_out_reg;
@@ -51,6 +55,22 @@ module alu (
                         end
                         DIV: begin 
                             alu_out_reg <= rs / rt;
+                        end
+                        ROR: begin
+                            // rotate right by (rt & 7)
+                            alu_out_reg <= (rs >> (rt & 7)) | (rs << (8 - (rt & 7)));
+                        end
+                        ROL: begin
+                            // rotate left by (rt & 7)
+                            alu_out_reg <= (rs << (rt & 7)) | (rs >> (8 - (rt & 7)));
+                        end
+                        SLL: begin
+                            // shift left logical by (rt & 7)
+                            alu_out_reg <= rs << (rt & 7);
+                        end
+                        SRL: begin
+                            // shift right logical by (rt & 7)
+                            alu_out_reg <= rs >> (rt & 7);
                         end
                     endcase
                 end
